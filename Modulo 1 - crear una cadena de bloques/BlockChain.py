@@ -41,8 +41,36 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
         self.chain.append(block)
         return block
     
-   
+    
+    def get_previous_block(self): #con self ya tenemos toda la cadena y consultamos el ultimo bloque             
+        return self.chain[-1] # devolvemos el ultimo bloque de la cadena
+    
+    # funcion proof of work - prueba de trabajo
+    # es un número que los mineros deben encontrar para añadir el bloque a la cadena
+    # definiremos un problema que será difícil de encontrar pero muy fácil de verificar
+    # de este modo tiene valor la creación de bloques, de ese modo por ejemplo la criptomoneda no pierde su valor
+    # dentro de la función resolveremos el problema y devolveremos el número correcto
+    def proof_of_work (self, previous_proof): 
+        new_proof = 1 # inicializo el valor de prueba
+        check_proof = False #será True cuando encontremos la prueba
+        #Cuantos mas 0 pidamos al inicio del Hash objetivo más complejo será resolver el poblema
+        while check_proof is False:
+            #debe ser una operación no simétrica, ponemos una sencilla   
+            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest() 
+            if hash_operation[:4]=='0000': # el hash es correcto, cumple la condicion
+                check_proof = True
+            else:          
+                new_proof +=1
+        return new_proof
+    
+    def hash(self, block):
+        encoded_block = json.dumps(block, sort_keys=True)
+        return hashlib.sha256(encoded_block).hexdigest()
 
-
+                
+                
+                       
+            
+               
+               
 #Parte 2 - Minado de un bloque de la cadena
-
