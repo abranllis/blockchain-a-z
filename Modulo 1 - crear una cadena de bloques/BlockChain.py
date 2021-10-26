@@ -66,6 +66,17 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
     def hash(self, block):
         encoded_block = json.dumps(block, sort_keys=True)
         return hashlib.sha256(encoded_block).hexdigest()
+    
+    # debemos validar que el hash previo de todos los bloques es correcto y el hash tb
+    #validamos toda la cadena de bloques
+    def is_chain_valid (self, chain): 
+        previous_block = chain[0]
+        block_index = 1
+        while block_index < len(chain):
+            
+        
+        
+        
 
                 
                 
