@@ -73,30 +73,70 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
     def is_chain_valid (self, chain): 
         previous_block = chain[0]
         block_index = 1
-        while block_index < len(chain): #RECORREMOS TODOS LOS BLOQUES
+         #RECORREMOS TODOS LOS BLOQUES
+        while block_index < len(chain):
             block = chain[block_index] #comprobamos que el campo hash previo coincide con el anterior
             
-            if block['previous_hash'] != self.hash(previous_block) :  #ALARMA LA CADENA NO ES VALIDA
+            #ALARMA LA CADENA NO ES VALIDA
+            if block['previous_hash'] != self.hash(previous_block) :  
                 return False
             previous_proof = previous_block['proof']
             proof = block['proof']
             hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()      
-            if hash_operation[:4] != '0000' : #HASH NO CORRECTO comprobamos el HASH de cada BLOQUE
+            #HASH NO CORRECTO comprobamos el HASH de cada BLOQUE
+            if hash_operation[:4] != '0000' : 
                 return False
             previous_block = block
             block_index += 1            
-         return True
+        return True
      
-        
-                
-            
-        
+     
+     
+#Parte 2 - Minado de un bloque de la cadena
+
+
+#CREAMOS UNA APLICACION WEB  - usaremos FLASK
+app = Flask(__name__)
+
+#CREAMOS UN OBJETO DE LA CLASE BLOCKCHAIN - UNA CADENA DE BLOQUES
+blockchain = Blockchain() 
+
+#MINAR UN NUEVO BLOQUE
+@app.route('/mine_block', methods=['GET'])
+
+#NO NECESITA ARGUMENTOS, LA FUNCION UNICAMENTE MINARÁ UN NUEVO BLOQUE
+def mine_block(): 
+    previous_block = blockchain.get_previous_block() #obtenemos el ultimo bloque de la cadena
+    previous_proof = previous_block['proof']  # proof del bloque previo 
+    proof = blockchain.proof_of_work(previous_proof) #proof actual
+    previous_hash = blockchain.hash(previous_block)  # hash previo
+    block = blockchain.create_block(proof, previous_hash) #creamos el bloque nuevo
+    response = {'message':'¡Enhorabuena, has minado un nuevo Bloque!',
+                'index': block['index'],
+                'timestamp':block['timestamp'],
+                'proof':block['proof'],
+                'previous_hash':block['previous_hash']
+                }
+    return jsonify(response)
+
+
     
 
-                
-                
-                       
-            
-               
-               
-#Parte 2 - Minado de un bloque de la cadena
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
