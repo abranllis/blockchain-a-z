@@ -56,7 +56,7 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
         #Cuantos mas 0 pidamos al inicio del Hash objetivo más complejo será resolver el poblema
         while check_proof is False:
             #debe ser una operación no simétrica, ponemos una sencilla   
-            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest() 
+            hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest() ## ESTA ES LA PROOF OF WORK
             if hash_operation[:4]=='0000': # el hash es correcto, cumple la condicion
                 check_proof = True
             else:          
@@ -67,16 +67,31 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
         encoded_block = json.dumps(block, sort_keys=True)
         return hashlib.sha256(encoded_block).hexdigest()
     
-    # debemos validar que el hash previo de todos los bloques es correcto y el hash tb
-    #validamos toda la cadena de bloques
+    #Comprobamos la cadena de bloques
+    #por un lado el hash anterior en cada bloque
+    #cada bloque su proof of work sea correcto    
     def is_chain_valid (self, chain): 
         previous_block = chain[0]
         block_index = 1
-        while block_index < len(chain):
+        while block_index < len(chain): #RECORREMOS TODOS LOS BLOQUES
+            block = chain[block_index] #comprobamos que el campo hash previo coincide con el anterior
+            
+            if block['previous_hash'] != self.hash(previous_block) :  #ALARMA LA CADENA NO ES VALIDA
+                return False
+            previous_proof = previous_block['proof']
+            proof = block['proof']
+            hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()      
+            if hash_operation[:4] != '0000' : #HASH NO CORRECTO comprobamos el HASH de cada BLOQUE
+                return False
+            previous_block = block
+            block_index += 1            
+         return True
+     
+        
+                
             
         
-        
-        
+    
 
                 
                 
