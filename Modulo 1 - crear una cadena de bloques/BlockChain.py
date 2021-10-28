@@ -120,7 +120,8 @@ app = Flask(__name__)
 
 #MINAR UN NUEVO BLOQUE
 
-@app.route('/mine_block', methods=['GET']) #lanzamos en FLASK la aplicación mine_block
+@app.route('/')
+@app.route('/mine_block') #lanzamos en FLASK la aplicación mine_block
 
            
 #OBTENER LA CADENA DE BLOQUES AL COMPLETO y su longitud
@@ -138,11 +139,24 @@ blockchain = Blockchain()
     
 #EJECUTAR LA APP
 #app.run()
-app.run(host = '0.0.0.0', port = 5000, debug=False)
+app.run(host = '0.0.0.0', debug=True, port=8080)
 
 
+#ESTE CODIGO SI FUNCIONA
+#@app.route('/')
+#@app.route('/mine_block')
+
+#def Hola():
+#    return 'Hola Mundo Flask es facil!'
+
+#if __name__ == "__main__":
+    
+#    app.run(host='0.0.0.0',
+#            debug=True,
+#            port=8080)
 
 
+##################################
 
 
 
