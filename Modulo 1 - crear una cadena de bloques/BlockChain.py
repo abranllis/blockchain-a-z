@@ -94,10 +94,6 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
      
 #Parte 2 - Minado de un bloque de la cadena
 
-
-
-
-
 #NO NECESITA ARGUMENTOS, LA FUNCION UNICAMENTE MINARÁ UN NUEVO BLOQUE
 def mine_block(): 
     previous_block = blockchain.get_previous_block() #obtenemos el ultimo bloque de la cadena
@@ -117,11 +113,18 @@ def mine_block():
 
 #CREAMOS UNA APLICACION WEB  - usaremos FLASK
 app = Flask(__name__)
+#si se obtiene un error 500 actualizar Flask reiniciar spydier y ejecutar la linea de abajo
+#app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
+
+
 
 #MINAR UN NUEVO BLOQUE
+
 @app.route('/mine_block', methods=['GET']) #lanzamos en FLASK la aplicación mine_block
 
+           
 #OBTENER LA CADENA DE BLOQUES AL COMPLETO y su longitud
+
 def get_chain():
     response = {'chain', blockchain.chain,
                 'length', len(blockchain.chain)                
@@ -134,7 +137,15 @@ def get_chain():
 blockchain = Blockchain() 
     
 #EJECUTAR LA APP
-app.run(host = '0.0.0.0', port = 5000)
+#app.run()
+app.run(host = '0.0.0.0', port = 5000, debug=False)
+
+
+
+
+
+
+
 
 
 
