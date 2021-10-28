@@ -95,14 +95,8 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
 #Parte 2 - Minado de un bloque de la cadena
 
 
-#CREAMOS UNA APLICACION WEB  - usaremos FLASK
-app = Flask(__name__)
 
-#CREAMOS UN OBJETO DE LA CLASE BLOCKCHAIN - UNA CADENA DE BLOQUES
-blockchain = Blockchain() 
 
-#MINAR UN NUEVO BLOQUE
-@app.route('/mine_block', methods=['GET'])
 
 #NO NECESITA ARGUMENTOS, LA FUNCION UNICAMENTE MINARÁ UN NUEVO BLOQUE
 def mine_block(): 
@@ -117,7 +111,35 @@ def mine_block():
                 'proof':block['proof'],
                 'previous_hash':block['previous_hash']
                 }
-    return jsonify(response)
+    return jsonify(response),200
+   
+
+
+#CREAMOS UNA APLICACION WEB  - usaremos FLASK
+app = Flask(__name__)
+
+#MINAR UN NUEVO BLOQUE
+@app.route('/mine_block', methods=['GET']) #lanzamos en FLASK la aplicación mine_block
+
+#OBTENER LA CADENA DE BLOQUES AL COMPLETO y su longitud
+def get_chain():
+    response = {'chain', blockchain.chain,
+                'length', len(blockchain.chain)                
+                }
+    return jsonify(response),200
+
+
+
+#CREAMOS UN OBJETO DE LA CLASE BLOCKCHAIN - UNA CADENA DE BLOQUES
+blockchain = Blockchain() 
+    
+#EJECUTAR LA APP
+app.run(host = '0.0.0.0', port = 5000)
+
+
+
+
+
 
 
     
