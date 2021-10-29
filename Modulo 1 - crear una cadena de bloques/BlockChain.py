@@ -64,7 +64,7 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
         return new_proof
     
     def hash(self, block):
-        encoded_block = json.dumps(block, sort_keys=True)
+        encoded_block = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
     
     #Comprobamos la cadena de bloques
@@ -94,7 +94,23 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
      
 #Parte 2 - Minado de un bloque de la cadena
 
+
+
+
+#CREAMOS UNA APLICACION WEB  - usaremos FLASK
+app = Flask(__name__)
+#si se obtiene un error 500 actualizar Flask reiniciar spydier y ejecutar la linea de abajo
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
+
+#CREAMOS UN OBJETO DE LA CLASE BLOCKCHAIN - UNA CADENA DE BLOQUES
+blockchain = Blockchain() 
+
+#MINAR UN NUEVO BLOQUE
+
+#@app.route('/')
+
 #NO NECESITA ARGUMENTOS, LA FUNCION UNICAMENTE MINARÁ UN NUEVO BLOQUE
+@app.route('/mine_block', methods= ['GET']) #lanzamos en FLASK la aplicación mine_block
 def mine_block(): 
     previous_block = blockchain.get_previous_block() #obtenemos el ultimo bloque de la cadena
     previous_proof = previous_block['proof']  # proof del bloque previo 
@@ -109,35 +125,21 @@ def mine_block():
                 }
     return jsonify(response),200
    
-
-
-#CREAMOS UNA APLICACION WEB  - usaremos FLASK
-app = Flask(__name__)
-#si se obtiene un error 500 actualizar Flask reiniciar spydier y ejecutar la linea de abajo
-#app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
-
-
-
-#MINAR UN NUEVO BLOQUE
-
-@app.route('/')
-@app.route('/mine_block') #lanzamos en FLASK la aplicación mine_block
-
+    
            
 #OBTENER LA CADENA DE BLOQUES AL COMPLETO y su longitud
-
+@app.route('/get_chain', methods= ['GET'])
 def get_chain():
     response = {'chain' : blockchain.chain,'length' : len(blockchain.chain) }
     return jsonify(response),200
 
+ 
 
 
-#CREAMOS UN OBJETO DE LA CLASE BLOCKCHAIN - UNA CADENA DE BLOQUES
-blockchain = Blockchain() 
     
 #EJECUTAR LA APP
 #app.run()
-app.run(host = '0.0.0.0', debug=False, port=8080)
+app.run(host = '0.0.0.0', debug=True, port=8080)
 
 
 #ESTE CODIGO SI FUNCIONA
