@@ -114,22 +114,20 @@ def mine_block():
 #CREAMOS UNA APLICACION WEB  - usaremos FLASK
 app = Flask(__name__)
 #si se obtiene un error 500 actualizar Flask reiniciar spydier y ejecutar la linea de abajo
-#app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
 
 
 
 #MINAR UN NUEVO BLOQUE
 
 @app.route('/')
-#@app.route('/mine_block') #lanzamos en FLASK la aplicación mine_block
+@app.route('/mine_block') #lanzamos en FLASK la aplicación mine_block
 
            
 #OBTENER LA CADENA DE BLOQUES AL COMPLETO y su longitud
 
 def get_chain():
-    response = {'chain', blockchain.chain,
-                'length', len(blockchain.chain)                
-                }
+    response = {'chain' : blockchain.chain,'length' : len(blockchain.chain) }
     return jsonify(response),200
 
 
@@ -139,7 +137,7 @@ blockchain = Blockchain()
     
 #EJECUTAR LA APP
 #app.run()
-app.run(host = '0.0.0.0', debug=True, port=8080)
+app.run(host = '0.0.0.0', debug=False, port=8080)
 
 
 #ESTE CODIGO SI FUNCIONA
@@ -151,9 +149,9 @@ app.run(host = '0.0.0.0', debug=True, port=8080)
 
 #if __name__ == "__main__":
     
-#    app.run(host='0.0.0.0',
-#            debug=True,
-#            port=8080)
+ #   app.run(host='0.0.0.0',
+ #           debug=True,
+ #           port=8080)
 
 
 ##################################
