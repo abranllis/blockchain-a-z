@@ -121,7 +121,7 @@ app = Flask(__name__)
 #MINAR UN NUEVO BLOQUE
 
 @app.route('/')
-@app.route('/mine_block') #lanzamos en FLASK la aplicación mine_block
+#@app.route('/mine_block') #lanzamos en FLASK la aplicación mine_block
 
            
 #OBTENER LA CADENA DE BLOQUES AL COMPLETO y su longitud
