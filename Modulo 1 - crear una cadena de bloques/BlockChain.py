@@ -114,7 +114,7 @@ def mine_block():
 #CREAMOS UNA APLICACION WEB  - usaremos FLASK
 app = Flask(__name__)
 #si se obtiene un error 500 actualizar Flask reiniciar spydier y ejecutar la linea de abajo
-app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
+#app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False 
 
 
 
