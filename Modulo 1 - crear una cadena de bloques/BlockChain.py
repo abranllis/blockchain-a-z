@@ -90,8 +90,7 @@ class Blockchain:   #nombre de la clase que estamos creando de cero
             block_index += 1            
         return True
      
-     
-     
+       
 #Parte 2 - Minado de un bloque de la cadena
 
 
@@ -105,9 +104,6 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 #CREAMOS UN OBJETO DE LA CLASE BLOCKCHAIN - UNA CADENA DE BLOQUES
 blockchain = Blockchain() 
 
-#MINAR UN NUEVO BLOQUE
-
-#@app.route('/')
 
 #NO NECESITA ARGUMENTOS, LA FUNCION UNICAMENTE MINARÁ UN NUEVO BLOQUE
 @app.route('/mine_block', methods= ['GET']) #lanzamos en FLASK la aplicación mine_block
@@ -133,57 +129,16 @@ def get_chain():
     response = {'chain' : blockchain.chain,'length' : len(blockchain.chain) }
     return jsonify(response),200
 
- 
-
-
+#ejercicio Tarea 1 RETO FIN- CREA UNA LLAMADA DESDE FLASK A UNA FUNCION QUE VALIDE LA CADENA
+@app.route('/is_valid', methods= ['GET']) #lanzamos en FLASK la aplicación mine_block
+#Comprobar si la cadena de bloques es valida
+def is_valid():    
+    is_valid = blockchain.is_chain_valid(blockchain.chain)       
+    respuesta = str(is_valid)
+    return  jsonify(respuesta),200
+     
     
-#EJECUTAR LA APP
+#EJECUTAR LA APP EN FLASK PARA SER LLAMADA DESDE POSTMAN
 #app.run()
 app.run(host = '0.0.0.0', debug=True, port=8080)
-
-
-#ESTE CODIGO SI FUNCIONA
-#@app.route('/')
-#@app.route('/mine_block')
-
-#def Hola():
-#    return 'Hola Mundo Flask es facil!'
-
-#if __name__ == "__main__":
-    
- #   app.run(host='0.0.0.0',
- #           debug=True,
- #           port=8080)
-
-#abraham
-##################################
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
