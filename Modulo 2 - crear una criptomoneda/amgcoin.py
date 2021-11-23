@@ -1,35 +1,44 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Aug 25 16:07:09 2021
+Created on Fri Nov 19 12:36:48 2021
 
-@author: juangabriel
+@author: abmartinez
 """
 
-# Módulo 1 - Crear una Cadena de Bloques
+# Módulo 2 - Crear una criptomoneda
 
 # Para Instalar:
 # Flask==1.1.2: pip install Flask==1.1.2
 # Cliente HTTP Postman: https://www.getpostman.com/
+#requests==2.18.4: pip install requests==2.18.4    librería para hacer peticiones HTTP
 
 # Importar las librerías
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+import requests
+from uuid import uuid4
+from urllib.parse import urlparse
+
 
 # Parte 1 - Crear la Cadena de Bloques
 class Blockchain:
     
     def __init__(self):
         self.chain = []
-        self.create_block(proof = 1, previous_hash = '0')
+        self.transactions = []        
+        self.create_block(proof = 1, previous_hash = '0') #creamos el bloque GENESIS
+        self.nodes = set()        #creamos un conjunto y no una lista ordenada, no tiene orden nodos de la cadena de bloques
+        
         
     def create_block(self, proof, previous_hash):
         block = {'index' : len(self.chain)+1,
                  'timestamp' : str(datetime.datetime.now()),
                  'proof' : proof,
-                 'previous_hash': previous_hash}
+                 'previous_hash': previous_hash,
+                 'transactions' : self.transactions}
+        self.transactions = [] #una vez minado borramos las transacciones
         self.chain.append(block)
         return block
 
@@ -41,7 +50,7 @@ class Blockchain:
         check_proof = False
         while check_proof is False:
             hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
-            if hash_operation[:4] == '00000':
+            if hash_operation[:4] == '0000':
                 check_proof = True
             else: 
                 new_proof += 1
@@ -61,11 +70,45 @@ class Blockchain:
             previous_proof = previous_block['proof']
             proof = block['proof']
             hash_operation = hashlib.sha256(str(proof**2 - previous_proof**2).encode()).hexdigest()
-            if hash_operation[:4] != '00000':
+            if hash_operation[:4] != '0000':
                 return False
             previous_block = block
             block_index += 1
         return True
+    
+    def add_transaction (self, sender, receiver, amount ):
+        self.transactions.append({'sender':sender, 'receiver': receiver, 'amount':amount})        
+        previous_block = self.previous_block()
+        return previous_block['index']+1
+    
+    def add_node(self, address):          #añadimos un nodo a la blockchain
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc)
+
+    #todos los nodos de la cadena llamaran a esta funcion y se reemplazaran si no son los mas largos
+    def replace_chain(self, ): #revisamos que todos los nodos de la cadena esten correctos, el que no se reemplaza
+         network = self.nodes
+         longest_chain = None
+         max_length = len(self.chain)
+         for node in network : #recorremos los nodos de la red y mostramos la cadena
+             response = requests.get(f'http://{node}/get_chain')
+             if response.status == 200 :
+                 length = response.json()['length']
+                 chain = response.json()['chain']    
+                 if length > max_length and self.is_chain_valid(chain):
+                     max_length = length
+                     longest_chain = chain
+         if longest_chain:  #hay una cadena mas larga asi que actualizamos
+            self.chain = longest_chain
+            return True
+         return False
+    
+    
+        
+            
+                     
+         
+         
     
 # Parte 2 - Minado de un Bloque de la Cadena
 
@@ -77,7 +120,6 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # Crear una Blockchain
 blockchain = Blockchain()
 
-blockchain.proof_of_work(1)
 
 # Minar un nuevo bloque
 @app.route('/mine_block', methods=['GET'])
@@ -111,8 +153,16 @@ def is_valid():
         response = {'message' : 'Houston, tenemos un problema. La cadena de bloques no es válida.'}
     return jsonify(response), 200  
 
+
+
+#Parte 3 - Descentralizar la cadena de bloques
+
+
+
 # Ejecutar la app
-#app.run(host = '0.0.0.0', port = 8080)
+app.run(host = '0.0.0.0', port = 8080, debug = True)
+
+
 
 
 
