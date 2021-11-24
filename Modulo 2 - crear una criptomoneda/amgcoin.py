@@ -103,19 +103,25 @@ class Blockchain:
             return True
          return False
     
-    
-        
-            
-                     
-         
-         
+          
     
 # Parte 2 - Minado de un Bloque de la Cadena
+
+
+    
+
+
+
+
 
 # Crear una aplicación web
 app = Flask(__name__)
 # Si se obtiene un error 500, actualizar flask, reiniciar spyder y ejecutar la siguiente línea
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+
+#Crear la dirección del nodo en el puerto 5000
+node_address = str(uuid4()).replace('-', '')
+
 
 # Crear una Blockchain
 blockchain = Blockchain()
@@ -128,12 +134,15 @@ def mine_block():
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
+    blockchain.add_transaction(sender=node_address, receiver="Abraham Martinez", amount=10)
     block = blockchain.create_block(proof, previous_hash)
     response = {'message' : '¡Enhorabuena, has minado un nuevo bloque!', 
                 'index': block['index'],
                 'timestamp' : block['timestamp'],
                 'proof' : block['proof'],
-                'HASH del BLOQUE previo' : block['previous_hash']}
+                'HASH del BLOQUE previo' : block['previous_hash'],
+                'transactions': block['transactions']                
+                }
     return jsonify(response), 200
 
 # Obtener la cadena de bloques al completo
@@ -153,14 +162,26 @@ def is_valid():
         response = {'message' : 'Houston, tenemos un problema. La cadena de bloques no es válida.'}
     return jsonify(response), 200  
 
+# Añadir una nueva transacción a la cadena de bloques
+@app.route('/add_transaction', methods= ['POST'])
+def add_transaction():
+    json = request.get_json()
+    transaction_keys = ['sender','receiver','amount']
+    if not all(key in json for key in transaction_keys):
+        return 'Faltan algunos elementos de la transacción',400
+    index = blockchain.add_transaction(json['sender'], json['receiver'], json['amount'])
+    response = {'message': f'La transacción será añadida al bloque {index}'}
+    return jsonify(response),201
 
 
 #Parte 3 - Descentralizar la cadena de bloques
 
+#Conectar nuevos nodos
+
 
 
 # Ejecutar la app
-app.run(host = '0.0.0.0', port = 8080, debug = True)
+app.run(host = '0.0.0.0', port = 5000, debug = True)
 
 
 
