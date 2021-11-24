@@ -86,7 +86,7 @@ class Blockchain:
         self.nodes.add(parsed_url.netloc)
 
     #todos los nodos de la cadena llamaran a esta funcion y se reemplazaran si no son los mas largos
-    def replace_chain(self, ): #revisamos que todos los nodos de la cadena esten correctos, el que no se reemplaza
+    def replace_chain(self ): #revisamos que todos los nodos de la cadena esten correctos, el que no se reemplaza
          network = self.nodes
          longest_chain = None
          max_length = len(self.chain)
@@ -177,7 +177,30 @@ def add_transaction():
 #Parte 3 - Descentralizar la cadena de bloques
 
 #Conectar nuevos nodos
+@app.route('/connect_node', methods= ['POST'])
+def connect_node():
+    json = request.get_json()
+    nodes = json.get('nodes')
+    if nodes is None:
+        return 'No hay nodos que añadir', 400
+    for node in nodes:
+        blockchain.add_node(node)         
+    response = {'message': 'Todos los nodos han sido conectados. La cadena de amgcoins contiene ahora los nodos siguienes.',
+                'total_nodes' : list(blockchain.nodes)}
+    return jsonify(response),201
 
+#reemplazar a cadena por la mas larga si es necesario
+#peticion por GET porque no hay que postear nada, no hay que enviar nada, solo es una verificacion
+@app.route('/replace_chain', methods = ['GET'])
+def replace_chain():    
+    is_chain_replaced = blockchain.replace_chain()  #indica si o no si hay que reemplazarla cadena de bloques
+    if is_chain_replaced:
+        response = {'message' : 'Los nodos tenian diferentes cadenas que han sido todas reemplazadas por la mas larga',
+                    'new_chain': blockchain.chain}
+    else:
+        response = {'message' : 'Todo correcto, La cadena en todos los nodos ya es la mas larga. Los nodos eran todos iguales',
+                    'actual_chain' : blockchain.chain}
+    return jsonify(response), 200  
 
 
 # Ejecutar la app
