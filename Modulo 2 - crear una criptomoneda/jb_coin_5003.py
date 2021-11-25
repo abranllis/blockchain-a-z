@@ -78,7 +78,7 @@ class Blockchain:
     
     def add_transaction (self, sender, receiver, amount ):
         self.transactions.append({'sender':sender, 'receiver': receiver, 'amount':amount})        
-        previous_block = self.previous_block()
+        previous_block = self.get_previous_block()
         return previous_block['index']+1
     
     def add_node(self, address):          #añadimos un nodo a la blockchain
@@ -92,7 +92,7 @@ class Blockchain:
          max_length = len(self.chain)
          for node in network : #recorremos los nodos de la red y mostramos la cadena
              response = requests.get(f'http://{node}/get_chain')
-             if response.status == 200 :
+             if response.status_code == 200 :
                  length = response.json()['length']
                  chain = response.json()['chain']    
                  if length > max_length and self.is_chain_valid(chain):
@@ -102,7 +102,8 @@ class Blockchain:
             self.chain = longest_chain
             return True
          return False
-    
+     
+        
           
     
 # Parte 2 - Minado de un Bloque de la Cadena
@@ -204,7 +205,7 @@ def replace_chain():
 
 
 # Ejecutar la app
-app.run(host = '0.0.0.0', port = 5003, debug = True)
+app.run(host = '0.0.0.0', port = 5003)
 
 
 
